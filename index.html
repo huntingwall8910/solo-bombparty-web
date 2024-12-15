@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    #letters {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #wordInput {
+      font-size: 18px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    #message {
+      font-size: 18px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guess the Word Game</h1>
+  <div id="letters">XX</div>
+  <input type="text" id="wordInput" placeholder="Type a word..." />
+  <button onclick="checkWord()">Submit</button>
+  <div id="message"></div>
+
+  <script>
+    // Global variable to store dictionary
+    let dictionary = [];
+
+    // Load JSON file containing the word list
+    fetch('words.json')
+      .then(response => response.json())
+      .then(data => {
+        dictionary = data; // Store the word list in the dictionary
+        console.log("Dictionary loaded:", dictionary);  // For debugging
+        displayNewLetters();  // Start the game once the dictionary is loaded
+      })
+      .catch(error => {
+        console.error("Error loading the word list:", error);
+      });
+
+    // Function to get all valid consecutive letter pairs from all words in the dictionary
+    function getAllValidConsecutivePairs() {
+      const validPairs = [];
+
+      // Loop through each word in the dictionary
+      dictionary.forEach(word => {
+        const wordLength = word.length;
+        
+        // Ensure the word is long enough for consecutive letters
+        if (wordLength < 2) return;  // Skip words with less than 2 letters
+        
+        // Loop through each pair of consecutive letters in the word
+        for (let i = 0; i < wordLength - 1; i++) {
+          const pair = word.substring(i, i + 2);  // Get two consecutive letters
+          validPairs.push(pair);
+        }
+      });
+
+      // Remove duplicates from the array
+      return [...new Set(validPairs)];
+    }
+
+    // Function to get a random valid consecutive letter pair from the dictionary
+    function getRandomConsecutiveLetters() {
+      const validPairs = getAllValidConsecutivePairs();
+      const randomIndex = Math.floor(Math.random() * validPairs.length);
+      const pair = validPairs[randomIndex];
+      
+      // Find a word that contains the chosen pair
+      const validWord = dictionary.find(word => word.includes(pair));
+
+      console.log("Word used to generate pair:", validWord); // Debugging the word used
+
+      return { pair, word: validWord };  // Return both the pair and the word containing it
+    }
+
+    function checkWord() {
+      const inputWord = document.getElementById("wordInput").value.toLowerCase();
+      const pair = currentPair.pair.toLowerCase()
+      console.log("Input Word:", inputWord);
+      console.log("Selected Pair:", pair);
+      if (inputWord.includes(pair)) {
+        document.getElementById("message").textContent = "Correct!";
+        document.getElementById("wordInput").value = "";
+        setTimeout(document.getElementById("message".textContent = "", 500));
+        displayNewLetters();
+      } else {
+        document.getElementById("message").textContent = "Try again";
+      }
+    }
+    let currentPair = {}; 
+    function displayNewLetters() {
+      currentPair = getRandomConsecutiveLetters();
+      if (currentPair) {
+        document.getElementById("letters").textContent = `${currentPair.pair[0].toUpperCase()}${currentPair.pair[1].toUpperCase()}`;
+      } else {
+        document.getElementById("message").textContent = "No valid pair found. Please try again.";
+      }
+    }
+    document.getElementById("wordInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        checkWord();
+      }
+    });
+  </script>
+</body>
+</html>
