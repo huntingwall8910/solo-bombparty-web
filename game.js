@@ -55,8 +55,10 @@ function displayNewLetters() {
     document.getElementById("message").textContent = "No valid pair found. Please try again.";
   }
 }
+document.addEventListener("DOMContentLoaded", function() {
 document.getElementById("wordInput").addEventListener("keypress", function(event) {
   if (event.key === "Enter") {
     checkWord();
   }
+});
 });
