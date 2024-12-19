@@ -33,19 +33,24 @@ function getRandomConsecutiveLetters() {
   return { pair, word: validWord };  
 }
 function checkWord() {
-  const inputWord = document.getElementById("wordInput").value.toLowerCase();
-  const pair = currentPair.pair.toLowerCase()
-  console.log("Input Word:", inputWord);
-  console.log("Selected Pair:", pair);
-  if (inputWord.includes(pair)) {
-    document.getElementById("message").textContent = "correct";
-    document.getElementById("wordInput").value = "";
-    setTimeout(document.getElementById("message".textContent = "", 500));
-    displayNewLetters();
-  } else {
-    document.getElementById("message").textContent = "word not in dictionary";
+    const inputWord = document.getElementById("wordInput").value.toLowerCase();
+    const pair = currentPair.pair.toLowerCase();
+    console.log("Input Word:", inputWord);
+    console.log("Selected Pair:", pair);
+    const isValidWord = dictionary.some(word => word.includes(pair) && word === inputWord);
+    if (isValidWord) {
+      document.getElementById("message").textContent = "Correct!";
+      document.getElementById("wordInput").value = "";
+      setTimeout(() => {
+        document.getElementById("message").textContent = "";
+      }, 1000);
+      displayNewLetters();
+    } else {
+      document.getElementById("message").textContent = "Invalid Word";
+    }
   }
-}
+  
+  
 let currentPair = {}; 
 function displayNewLetters() {
   currentPair = getRandomConsecutiveLetters();
